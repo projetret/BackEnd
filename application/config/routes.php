@@ -53,7 +53,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 $route['auth/login']['post']           = 'auth/login';
 $route['auth/logout']['post']          = 'auth/logout';
-$route['agency']['get']          	       = 'agence';
+$route['api/agency']['get']			  = 'agence';  
+//$route['agency']['get']          	       = 'agence';
 $route['agency/detail/(:num)']['get']    = 'agence/detail/$1';
 $route['agency/create']['post']   	   = 'agence/create';
 $route['agency/update/(:num)']['put']    = 'agence/update/$1';

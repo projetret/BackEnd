@@ -18,18 +18,19 @@ class MyModel extends CI_Model {
 
     public function login($username,$password)
     {
-        $q  = $this->db->select('password,id')->from('users')->where('username',$username)->get()->row();
+        $q  = $this->db->select('password,userId')->from('tbl_users')->where('email',$username)->get()->row();
         if($q == ""){
-            return array('status' => 204,'message' => 'Username not found.');
+            return array('status' => 502,'message' => 'Username not found.');
         } else {
             $hashed_password = $q->password;
-            $id              = $q->id;
+            $id              = $q->userId;
+            
             if (hash_equals($hashed_password, crypt($password, $hashed_password))) {
                $last_login = date('Y-m-d H:i:s');
-               $token = crypt(substr( md5(rand()), 0, 7));
+               $token = crypt(substr( md5(rand()), 0, 7),'');
                $expired_at = date("Y-m-d H:i:s", strtotime('+2 hours'));
                $this->db->trans_start();
-               $this->db->where('id',$id)->update('users',array('last_login' => $last_login));
+               $this->db->where('userId',$id)->update('tbl_users',array('last_login' => $last_login));
                $this->db->insert('users_authentication',array('users_id' => $id,'token' => $token,'expired_at' => $expired_at));
                if ($this->db->trans_status() === FALSE){
                   $this->db->trans_rollback();
@@ -39,7 +40,7 @@ class MyModel extends CI_Model {
                   return array('status' => 200,'message' => 'Successfully login.','id' => $id, 'token' => $token);
                }
             } else {
-               return array('status' => 204,'message' => 'Wrong password.');
+               return array('status' => 502,'message' => 'Wrong password.');
             }
         }
     }
